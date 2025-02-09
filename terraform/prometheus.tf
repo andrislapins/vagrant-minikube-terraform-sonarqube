@@ -9,8 +9,8 @@ resource "kubernetes_namespace" "prometheus" {
 }
 
 resource "helm_release" "prometheus" {
-  name       = "prometheus"
-  namespace  = kubernetes_namespace.prometheus.metadata[0].name
+  name      = "prometheus"
+  namespace = kubernetes_namespace.prometheus.metadata[0].name
 
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "prometheus"
@@ -19,7 +19,7 @@ resource "helm_release" "prometheus" {
   wait = true
   values = [
     templatefile("${path.module}/configs/prometheus.tpl.yaml", {
-      prometheus_hostname      = var.prometheus_hostname
+      prometheus_hostname = var.prometheus_hostname
     })
   ]
 }

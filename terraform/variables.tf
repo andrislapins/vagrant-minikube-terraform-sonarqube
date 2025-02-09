@@ -75,3 +75,11 @@ variable "prometheus_hostname" {
   type    = string
   default = "prometheus.local"
 }
+
+# K8s metrics
+
+variable "metrics_ns" {
+  type        = string
+  description = "Namespace for K8s metrics server"
+  default     = "metrics"
+}

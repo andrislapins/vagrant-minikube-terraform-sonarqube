@@ -16,7 +16,7 @@ resource "helm_release" "sonarqube" {
   chart      = "sonarqube"
   version    = "9.11.0"
 
-  wait   = true
+  wait = true
   values = [
     templatefile("${path.module}/configs/sonarqube.tpl.yaml", {
       postgres_url      = local.postgres_url

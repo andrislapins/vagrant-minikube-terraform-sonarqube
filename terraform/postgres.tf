@@ -1,6 +1,6 @@
 
 locals {
-    postgres_url = "${helm_release.postgres.name}-postgresql.${kubernetes_namespace.postgres.metadata[0].name}.svc.cluster.local"
+  postgres_url = "${helm_release.postgres.name}-postgresql.${kubernetes_namespace.postgres.metadata[0].name}.svc.cluster.local"
 }
 
 resource "kubernetes_namespace" "postgres" {
