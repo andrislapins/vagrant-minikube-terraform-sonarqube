@@ -1,0 +1,10 @@
+controller:
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    apiVersion: "extensions/v1beta1"
+    hostName: ${jenkins_hostname}
+    paths: []
+  prometheus:
+    enabled: true

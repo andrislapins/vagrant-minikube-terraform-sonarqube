@@ -1,0 +1,21 @@
+prometheusMonitoring:
+  podMonitor:
+    enabled: true
+postgresql:
+  enabled: false
+  postgresqlServer: ${postgres_url}
+  postgresqlDatabase: ${sonar_db_name}
+  postgresqlUsername: ${sonar_db_username}
+  postgresqlPassword: ${sonar_db_password}
+persistence:
+  enabled: true
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - name: ${sonar_hostname}
+      path: /
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.allow-http: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"

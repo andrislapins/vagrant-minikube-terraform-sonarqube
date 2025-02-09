@@ -1,0 +1,64 @@
+
+# macOS specific ignores
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows specific ignores
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux specific ignores
+*~
+.nfs*
+
+# IntelliJ IDEA specific ignores
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# VS Code specific ignores
+.vscode/
+*.code-workspace
+
+# Terraform specific ignores
+**/.terraform
+
+*.tfstate
+*.tfstate.*
+
+crash.log
+crash.*.log
+
+*.tfvars
+*.tfvars.json
+
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+*.lock.hcl
+*.tfplan
+
+.terraformrc
+terraform.rc
+
+# Misc
+*.bak
+*.swp
+*.swo
+*.swn
+
+# Project specific ignores
+*.pdf
+attic/
+.vagrant/
+TODOs.txt
+backend/
+frontend/
+jenkins/
