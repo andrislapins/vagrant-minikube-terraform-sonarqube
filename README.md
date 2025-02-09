@@ -25,7 +25,15 @@ The setup performs the following tasks:
 
 ## How to Run
 
-1. **Clone the repository:**
+<span style="color: red; font-weight: bold;">NOTE:</span> You need to provide a `.tfvars` file (e.g., `terraform/secrets.auto.tfvars`) to ensure the SonarQube and PostgreSQL passwords are applied.
+For example:
+```hcl
+# terraform/secrets.auto.tfvars
+postgres_password = "secretpassword"
+sonar_db_password = "secretpassword"
+```
+
+1. **Clone the repository and start up Vagrant:**
    ```bash
    git clone git@github.com:andrislapins/vagrant-minikube-terraform-sonarqube.git
    cd vagrant-minikube-terraform-sonarqube
