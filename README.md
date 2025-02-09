@@ -27,7 +27,7 @@ The setup performs the following tasks:
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone git@github.com:andrislapins/vagrant-minikube-terraform-sonarqube.git
+   cd vagrant-minikube-terraform-sonarqube
    vagrant up
    ```
