@@ -21,7 +21,7 @@ The setup performs the following tasks:
 4. **Configures Ingress:**  
    SonarQube is exposed via an Ingress.
    You can set the desired URL to access SonarQube on the browser in Terraform `variables.tf` file.
-   For example, `http://sonarqube.local`.
+   For example, `sonarqube.local`.
 
 ## How to Run
 
