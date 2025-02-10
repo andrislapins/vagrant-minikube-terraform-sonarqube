@@ -84,6 +84,7 @@ fi
 # Starting Minikube
 echo "Starting Minikube..."
 minikube start \
+  --force \
   --driver=kvm2 \
   --container-runtime=containerd \
   --cpus=4 \
