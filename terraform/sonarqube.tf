@@ -16,7 +16,8 @@ resource "helm_release" "sonarqube" {
   chart      = "sonarqube"
   version    = "9.11.0"
 
-  wait = true
+  wait    = true
+  timeout = 600 # Increase timeout to 10 minutes (600 seconds)
   values = [
     templatefile("${path.module}/configs/sonarqube.tpl.yaml", {
       postgres_url      = local.postgres_url
