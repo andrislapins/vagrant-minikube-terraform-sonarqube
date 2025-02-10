@@ -62,3 +62,9 @@ TODOs.txt
 backend/
 frontend/
 jenkins/
+
+setup-personal.sh
+terraform/configs/jenkins.tpl.yaml
+terraform/jenkins.tf
+terraform/k8s-metrics.tf
+terraform/prometheus.tf
