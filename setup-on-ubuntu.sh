@@ -8,6 +8,9 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+CURRENT_USER=$(whoami)
+echo "Script is running as: $CURRENT_USER"
+
 # Updating package list
 echo "Updating package list..."
 apt-get update
@@ -70,7 +73,7 @@ fi
 
 # Starting Minikube
 echo "Starting Minikube..."
-sudo -u ubuntu -- bash -c "minikube start \
+sudo -u $CURRENT_USER -- bash -c "minikube start \
   --force \
   --driver=kvm2 \
   --container-runtime=containerd \
@@ -80,18 +83,18 @@ sudo -u ubuntu -- bash -c "minikube start \
 
 # For technical simplicity, use Minikube addon instead of configuring Nginx Helm
 # chart with ExternalIP of Minikube IP
-sudo -u ubuntu -- bash -c "minikube addons enable ingress"
+sudo -u $CURRENT_USER -- bash -c "minikube addons enable ingress"
 
 # Initializing and applying Terraform configuration
 echo "Initializing and applying Terraform configuration..."
 cd terraform
-terraform init
-terraform apply -auto-approve
+sudo -u $CURRENT_USER -- bash -c "terraform init"
+sudo -u $CURRENT_USER -- bash -c "terraform apply -auto-approve"
 
 # Configuring /etc/hosts to map sonarqube.local to Minikube IP
 echo "Configuring /etc/hosts to map sonarqube.local to Minikube IP..."
-MINIKUBE_IP=$(minikube ip)
-SONAR_HOSTNAME=$(terraform output -raw sonar_hostname)
+MINIKUBE_IP=$(sudo -u $CURRENT_USER -- bash -c "minikube ip")
+SONAR_HOSTNAME=$(sudo -u $CURRENT_USER -- bash -c "terraform output -raw sonar_hostname")
 echo "$MINIKUBE_IP $SONAR_HOSTNAME" >> /etc/hosts
 
 # Completing the setup
