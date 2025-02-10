@@ -23,7 +23,7 @@ fi
 # Updating package list
 echo "Updating package list..."
 apt-get update
-apt-get -y dist-upgrade
+# apt-get -y dist-upgrade
 
 # Installing prerequisites
 echo "Installing prerequisites..."
