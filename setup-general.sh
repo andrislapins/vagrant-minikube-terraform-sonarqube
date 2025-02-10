@@ -38,7 +38,7 @@ systemctl enable libvirtd
 systemctl start libvirtd
 
 # Add user to libvirt and kvm groups
-usermod -aG libvirt,kvm $NON_ROOT_USER
+# usermod -aG libvirt,kvm $NON_ROOT_USER
 
 # Install kubectl if not installed
 # Source: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
