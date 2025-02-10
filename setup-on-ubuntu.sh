@@ -13,9 +13,9 @@ sudo apt-get update
 echo "Installing prerequisites..."
 sudo apt-get install -y curl ca-certificates apt-transport-https gnupg2 software-properties-common unzip containerd bridge-utils conntrack
 
-# Install KVM/QEMU for Minikube
+# Install KVM/QEMU and VirtualBox for Minikube
 echo "Installing KVM/QEMU for Minikube..."
-sudo apt-get install -y qemu-kvm libvirt-daemon-system libvirt-clients virt-manager
+sudo apt-get install -y qemu-kvm libvirt-daemon-system libvirt-clients virt-manager virtualbox virtualbox-ext-pack
 
 # Fix boot lock issue
 sudo sysctl fs.protected_regular=0
@@ -25,7 +25,6 @@ sudo systemctl enable libvirtd
 sudo systemctl start libvirtd
 
 sudo usermod -aG libvirt,kvm $CURRENT_USER
-su - $USER
 
 # Install kubectl if not installed
 # Source: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
@@ -71,7 +70,7 @@ fi
 # Starting Minikube
 echo "Starting Minikube..."
 minikube start \
-  --driver=kvm \
+  --driver=virtualbox \
   --container-runtime=containerd \
   --cpus=4 \
   --memory=8gb \
