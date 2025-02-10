@@ -25,6 +25,13 @@ The setup performs the following tasks:
 
 ## How to Run
 
+```bash
+git clone git@github.com:andrislapins/vagrant-minikube-terraform-sonarqube.git
+cd vagrant-minikube-terraform-sonarqube
+```
+
+<span style="color: red; font-weight: bold;">NOTE:</span> Tested only on Ubuntu 24.04 LTS
+
 <span style="color: red; font-weight: bold;">NOTE:</span> You need to provide a `.tfvars` file (e.g., `terraform/secrets.auto.tfvars`) to ensure the SonarQube and PostgreSQL passwords are applied.
 For example:
 ```hcl
@@ -33,9 +40,40 @@ postgres_password = "secretpassword"
 sonar_db_password = "secretpassword"
 ```
 
-1. **Clone the repository and start up Vagrant:**
-   ```bash
-   git clone git@github.com:andrislapins/vagrant-minikube-terraform-sonarqube.git
-   cd vagrant-minikube-terraform-sonarqube
-   vagrant up
-   ```
+### **Option 1: Launch locally**
+```bash
+./setup-general.sh
+```
+
+### **Option 2: Launch using Vagrant**
+
+Install Vagrant:
+```bash
+wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install vagrant
+```
+Source: https://developer.hashicorp.com/vagrant/downloads
+
+Setup Vagrant:
+```bash
+vagrant init
+vagrant plugin install vagrant-libvirt
+```
+
+Sadly, there is no support for newer Ubuntu versions on Vagrant - https://askubuntu.com/questions/1520083/are-there-vagrant-boxes-for-recent-ubuntu-releases.
+I had to download a specific Vagrant box with libvirt support.
+Donwload the box I used from https://portal.cloud.hashicorp.com/vagrant/discover/generic/ubuntu2004 and add it to Vagrant:
+```bash
+vagrant box add --name my-ubuntu-20.04 <path/to/the/downloaded/box>
+```
+
+Launch:
+```bash
+vagrant up
+```
+
+To destroy your Vagrant setup without being prompted:
+```bash
+vagrant destroy -f 
+```
