@@ -30,7 +30,9 @@ git clone git@github.com:andrislapins/vagrant-minikube-terraform-sonarqube.git
 cd vagrant-minikube-terraform-sonarqube
 ```
 
-<span style="color: red; font-weight: bold;">NOTE:</span> Tested only on Ubuntu 24.04 LTS
+<span style="color: red; font-weight: bold;">NOTE:</span> Tested only on: 
+- Ubuntu 24.04 LTS Desktop
+- Ubuntu 24.04 LTS Server
 
 <span style="color: red; font-weight: bold;">NOTE:</span> You need to provide a `.tfvars` file (e.g., `terraform/secrets.auto.tfvars`) to ensure the SonarQube and PostgreSQL passwords are applied.
 For example:
