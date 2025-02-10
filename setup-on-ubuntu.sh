@@ -74,7 +74,6 @@ fi
 # Starting Minikube
 echo "Starting Minikube..."
 sudo -u $CURRENT_USER -- bash -c "minikube start \
-  --force \
   --driver=kvm2 \
   --container-runtime=containerd \
   --cpus=4 \
