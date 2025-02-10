@@ -14,5 +14,5 @@ Vagrant.configure("2") do |config|
   
   config.vm.synced_folder ".", "/home/vagrant/project", owner: "vagrant", group: "vagrant", type: "rsync"
 
-  config.vm.provision "shell", path: "setup-general.sh"
+  config.vm.provision "shell", path: "setup-on-vagrant.sh"
 end

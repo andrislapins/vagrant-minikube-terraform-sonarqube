@@ -44,7 +44,7 @@ sonar_db_password = "secretpassword"
 
 ### **Option 1: Launch locally**
 ```bash
-./setup-general.sh
+./setup-on-ubuntu.sh
 ```
 
 ### **Option 2: Launch using Vagrant**

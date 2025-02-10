@@ -10,20 +10,19 @@ fi
 
 # Define non-root user (Vagrant or other)
 # Check if the non-root user exists
-# NON_ROOT_USER="vagrant"
-# NON_ROOT_USER_PWD="vagrantUSER123"
+NON_ROOT_USER="vagrant"
+NON_ROOT_USER_PWD="vagrantUSER123"
 
-# if ! id "$NON_ROOT_USER" &>/dev/null; then
-#   echo "User '$NON_ROOT_USER' does not exist. Creating..."
-#   useradd -m -s /bin/bash "$NON_ROOT_USER"
-#   echo "$NON_ROOT_USER:$NON_ROOT_USER_PWD" | chpasswd  
-#   echo "$NON_ROOT_USER ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/99-$NON_ROOT_USER
-# fi
+if ! id "$NON_ROOT_USER" &>/dev/null; then
+  echo "User '$NON_ROOT_USER' does not exist. Creating..."
+  useradd -m -s /bin/bash "$NON_ROOT_USER"
+  echo "$NON_ROOT_USER:$NON_ROOT_USER_PWD" | chpasswd  
+  echo "$NON_ROOT_USER ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/99-$NON_ROOT_USER
+fi
 
 # Updating package list
 echo "Updating package list..."
 apt-get update
-# apt-get -y dist-upgrade
 
 # Installing prerequisites
 echo "Installing prerequisites..."
@@ -38,7 +37,7 @@ systemctl enable libvirtd
 systemctl start libvirtd
 
 # Add user to libvirt and kvm groups
-# usermod -aG libvirt,kvm $NON_ROOT_USER
+usermod -aG libvirt,kvm $NON_ROOT_USER
 
 # Install kubectl if not installed
 # Source: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
@@ -83,28 +82,27 @@ fi
 
 # Starting Minikube
 echo "Starting Minikube..."
-minikube start \
-  --force \
+sudo -u $NON_ROOT_USER -- bash -c "minikube start \
   --driver=kvm2 \
   --container-runtime=containerd \
   --cpus=4 \
   --memory=8gb \
-  --disk-size=20gb
+  --disk-size=20gb"
 
 # For technical simplicity, use Minikube addon instead of configuring Nginx Helm
 # chart with ExternalIP of Minikube IP
-minikube addons enable ingress
+sudo -u $NON_ROOT_USER -- bash -c "minikube addons enable ingress"
 
 # Initializing and applying Terraform configuration
 echo "Initializing and applying Terraform configuration..."
-cd terraform
-terraform init
-terraform apply -auto-approve
+cd /home/vagrant/project/terraform
+sudo -u $NON_ROOT_USER -- bash -c "terraform init"
+sudo -u $NON_ROOT_USER -- bash -c "terraform apply -auto-approve"
 
 # Configuring /etc/hosts to map sonarqube.local to Minikube IP
 echo "Configuring /etc/hosts to map sonarqube.local to Minikube IP..."
-MINIKUBE_IP=$(minikube ip)
-SONAR_HOSTNAME=$(terraform output -raw sonar_hostname)
+MINIKUBE_IP=$(sudo -u $NON_ROOT_USER -- bash -c "minikube ip")
+SONAR_HOSTNAME=$(sudo -u $NON_ROOT_USER -- bash -c "terraform output -raw sonar_hostname")
 echo "$MINIKUBE_IP $SONAR_HOSTNAME" >> /etc/hosts
 
 # Completing the setup
