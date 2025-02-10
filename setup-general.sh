@@ -91,31 +91,17 @@ sudo -u $NON_ROOT_USER -- bash -c "minikube addons enable ingress"
 # Initializing and applying Terraform configuration
 echo "Initializing and applying Terraform configuration..."
 cd /home/vagrant/project/terraform
-
 sudo -u $NON_ROOT_USER -- bash -c "terraform init"
 sudo -u $NON_ROOT_USER -- bash -c "terraform apply -auto-approve"
 
 # Configuring /etc/hosts to map sonarqube.local to Minikube IP
-# echo "Configuring /etc/hosts to map sonarqube.local to Minikube IP..."
-# MINIKUBE_IP=$(sudo -u $NON_ROOT_USER -- bash -c "minikube ip")
-
-# SONAR_HOSTNAME=$(sudo -u $NON_ROOT_USER -- bash -c "terraform output -raw sonarqube_hostname")
-# if ! grep -q "$SONAR_HOSTNAME" /etc/hosts; then
-#   echo "$MINIKUBE_IP $SONAR_HOSTNAME" >> /etc/hosts
-# else
-#   sed -i "s/.*$SONAR_HOSTNAME\$/$MINIKUBE_IP $SONAR_HOSTNAME/" /etc/hosts
-# fi
-
-# JENKINS_HOSTNAME=$(sudo -u $NON_ROOT_USER -- bash -c "terraform output -raw jenkins_hostname")
-# if ! grep -q "$JENKINS_HOSTNAME" /etc/hosts; then
-#   echo "$MINIKUBE_IP $JENKINS_HOSTNAME" >> /etc/hosts
-# else
-#   sed -i "s/.*$JENKINS_HOSTNAME\$/$MINIKUBE_IP $JENKINS_HOSTNAME/" /etc/hosts
-# fi
+echo "Configuring /etc/hosts to map sonarqube.local to Minikube IP..."
+MINIKUBE_IP=$(sudo -u $NON_ROOT_USER -- bash -c "minikube ip")
+SONAR_HOSTNAME=$(sudo -u $NON_ROOT_USER -- bash -c "terraform output -raw sonar_hostname")
+echo "$MINIKUBE_IP $SONAR_HOSTNAME" >> /etc/hosts
 
 # Completing the setup
-# echo "----------------------------------------------------"
-# echo "Deployment is complete."
-# echo "Access SonarQube at: http://$SONAR_HOSTNAME"
-# echo "Access Jenkins at: http://$JENKINS_HOSTNAME"
-# echo "----------------------------------------------------"
+echo "----------------------------------------------------"
+echo "Deployment is complete."
+echo "Access SonarQube at: http://$SONAR_HOSTNAME"
+echo "----------------------------------------------------"
