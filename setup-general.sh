@@ -44,7 +44,7 @@ if ! command -v kubectl &> /dev/null; then
   echo "Installing kubectl..."
   curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
   install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-  rm kubectl
+  rm -rf kubectl
 fi
 
 # Install Minikube if not installed
@@ -52,7 +52,7 @@ if ! command -v minikube &> /dev/null; then
   echo "Installing Minikube..."
   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
   install minikube-linux-amd64 /usr/local/bin/minikube
-  rm minikube-linux-amd64
+  rm -rf minikube-linux-amd64
 fi
 
 # Install Helm (Helm 3)
@@ -70,7 +70,7 @@ if ! command -v terraform &> /dev/null; then
   curl -LO https://releases.hashicorp.com/terraform/1.5.0/terraform_1.5.0_linux_amd64.zip
   unzip terraform_1.5.0_linux_amd64.zip
   mv terraform /usr/local/bin/
-  rm terraform_1.5.0_linux_amd64.zip
+  rm -rf terraform_1.5.0_linux_amd64.zip
 fi
 
 # Starting Minikube
