@@ -2,33 +2,27 @@
 
 set -ex
 
-# Check if running as root
-if [ "$EUID" -ne 0 ]; then
-  echo "Please run this script as root or using sudo."
-  exit 1
-fi
-
 CURRENT_USER=$(whoami)
 echo "Script is running as: $CURRENT_USER"
 
 # Updating package list
 echo "Updating package list..."
-apt-get update
+sudo apt-get update
 
 # Installing prerequisites
 echo "Installing prerequisites..."
-apt-get install -y curl ca-certificates apt-transport-https gnupg2 software-properties-common unzip containerd bridge-utils conntrack
+sudo apt-get install -y curl ca-certificates apt-transport-https gnupg2 software-properties-common unzip containerd bridge-utils conntrack
 
 # Install KVM/QEMU for Minikube
 echo "Installing KVM/QEMU for Minikube..."
-apt-get install -y qemu-kvm libvirt-daemon-system libvirt-clients virt-manager
+sudo apt-get install -y qemu-kvm libvirt-daemon-system libvirt-clients virt-manager
 
 # Fix boot lock issue
 sudo sysctl fs.protected_regular=0
 
 # Ensure libvirt is running
-systemctl enable libvirtd
-systemctl start libvirtd
+sudo systemctl enable libvirtd
+sudo systemctl start libvirtd
 
 # Install kubectl if not installed
 # Source: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
@@ -73,28 +67,28 @@ fi
 
 # Starting Minikube
 echo "Starting Minikube..."
-sudo -u $CURRENT_USER -- bash -c "minikube start \
+minikube start \
   --driver=kvm2 \
   --container-runtime=containerd \
   --cpus=4 \
   --memory=8gb \
-  --disk-size=20gb"
+  --disk-size=20gb
 
 # For technical simplicity, use Minikube addon instead of configuring Nginx Helm
 # chart with ExternalIP of Minikube IP
-sudo -u $CURRENT_USER -- bash -c "minikube addons enable ingress"
+minikube addons enable ingress
 
 # Initializing and applying Terraform configuration
 echo "Initializing and applying Terraform configuration..."
 cd terraform
-sudo -u $CURRENT_USER -- bash -c "terraform init"
-sudo -u $CURRENT_USER -- bash -c "terraform apply -auto-approve"
+terraform init
+terraform apply -auto-approve
 
 # Configuring /etc/hosts to map sonarqube.local to Minikube IP
 echo "Configuring /etc/hosts to map sonarqube.local to Minikube IP..."
-MINIKUBE_IP=$(sudo -u $CURRENT_USER -- bash -c "minikube ip")
-SONAR_HOSTNAME=$(sudo -u $CURRENT_USER -- bash -c "terraform output -raw sonar_hostname")
-echo "$MINIKUBE_IP $SONAR_HOSTNAME" >> /etc/hosts
+MINIKUBE_IP=$(minikube ip)
+SONAR_HOSTNAME=$(terraform output -raw sonar_hostname)
+echo "$MINIKUBE_IP $SONAR_HOSTNAME" | sudo tee -a /etc/hosts
 
 # Completing the setup
 echo "----------------------------------------------------"
