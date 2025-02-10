@@ -76,6 +76,16 @@ variable "prometheus_hostname" {
   default = "prometheus.local"
 }
 
+variable "grafana_hostname" {
+  type    = string
+  default = "grafana.local"
+}
+
+variable "alertmanager_hostname" {
+  type    = string
+  default = "alertmanager.local"
+}
+
 # K8s metrics
 
 variable "metrics_ns" {
