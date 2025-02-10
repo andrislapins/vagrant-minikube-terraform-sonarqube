@@ -70,7 +70,7 @@ fi
 # Starting Minikube
 echo "Starting Minikube..."
 minikube start \
-  --driver=kvm2 \
+  --driver=qemu \
   --container-runtime=containerd \
   --cpus=4 \
   --memory=8gb \
