@@ -20,6 +20,9 @@ apt-get install -y curl ca-certificates apt-transport-https gnupg2 software-prop
 echo "Installing KVM/QEMU for Minikube..."
 apt-get install -y qemu-kvm libvirt-daemon-system libvirt-clients virt-manager
 
+# Fix boot lock issue
+sudo sysctl fs.protected_regular=0
+
 # Ensure libvirt is running
 systemctl enable libvirtd
 systemctl start libvirtd
@@ -67,17 +70,17 @@ fi
 
 # Starting Minikube
 echo "Starting Minikube..."
-minikube start \
+sudo -u ubuntu -- bash -c "minikube start \
   --force \
   --driver=kvm2 \
   --container-runtime=containerd \
   --cpus=4 \
   --memory=8gb \
-  --disk-size=20gb
+  --disk-size=20gb"
 
 # For technical simplicity, use Minikube addon instead of configuring Nginx Helm
 # chart with ExternalIP of Minikube IP
-minikube addons enable ingress
+sudo -u ubuntu -- bash -c "minikube addons enable ingress"
 
 # Initializing and applying Terraform configuration
 echo "Initializing and applying Terraform configuration..."
