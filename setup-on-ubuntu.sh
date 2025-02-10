@@ -25,6 +25,7 @@ sudo systemctl enable libvirtd
 sudo systemctl start libvirtd
 
 sudo usermod -aG libvirt,kvm $CURRENT_USER
+exec su -l $CURRENT_USER
 
 # Install kubectl if not installed
 # Source: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
@@ -70,7 +71,7 @@ fi
 # Starting Minikube
 echo "Starting Minikube..."
 minikube start \
-  --driver=qemu \
+  --driver=kvm \
   --container-runtime=containerd \
   --cpus=4 \
   --memory=8gb \
