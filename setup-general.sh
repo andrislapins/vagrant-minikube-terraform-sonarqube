@@ -38,8 +38,6 @@ systemctl start libvirtd
 
 # Add user to libvirt and kvm groups
 usermod -aG libvirt,kvm $NON_ROOT_USER
-newgrp libvirt
-newgrp kvm
 
 # Install kubectl if not installed
 if ! command -v kubectl &> /dev/null; then
