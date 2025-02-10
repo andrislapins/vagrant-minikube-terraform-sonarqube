@@ -25,7 +25,7 @@ sudo systemctl enable libvirtd
 sudo systemctl start libvirtd
 
 sudo usermod -aG libvirt,kvm $CURRENT_USER
-exec su -l $CURRENT_USER
+su - $USER
 
 # Install kubectl if not installed
 # Source: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
