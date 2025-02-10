@@ -64,7 +64,11 @@ frontend/
 jenkins/
 
 setup-personal.sh
-terraform/configs/jenkins.tpl.yaml
+
 terraform/jenkins.tf
 terraform/k8s-metrics.tf
 terraform/prometheus.tf
+
+terraform/configs/jenkins.tpl.yaml
+terraform/configs/metrics.tpl.yaml
+terraform/configs/prometheus.tpl.yaml
