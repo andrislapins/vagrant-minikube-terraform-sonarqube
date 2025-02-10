@@ -26,7 +26,7 @@ apt-get update
 
 # Installing prerequisites
 echo "Installing prerequisites..."
-apt-get install -y apt-transport-https gnupg2 software-properties-common unzip containerd bridge-utils conntrack
+apt-get install -y curl ca-certificates apt-transport-https gnupg2 software-properties-common unzip containerd bridge-utils conntrack
 
 # Install KVM/QEMU for Minikube
 echo "Installing KVM/QEMU for Minikube..."
@@ -40,37 +40,44 @@ systemctl start libvirtd
 usermod -aG libvirt,kvm $NON_ROOT_USER
 
 # Install kubectl if not installed
+# Source: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
 if ! command -v kubectl &> /dev/null; then
   echo "Installing kubectl..."
   curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-  install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-  rm -rf kubectl
+  sudo mkdir -p -m 755 /etc/apt/keyrings
+  curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  sudo chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+  sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list
+  sudo apt-get update
+  sudo apt-get install -y kubectl
 fi
 
 # Install Minikube if not installed
+# Source: https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fdebian+package
 if ! command -v minikube &> /dev/null; then
   echo "Installing Minikube..."
-  curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-  install minikube-linux-amd64 /usr/local/bin/minikube
-  rm -rf minikube-linux-amd64
+  curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+  sudo dpkg -i minikube_latest_amd64.deb
 fi
 
 # Install Helm (Helm 3)
+# Source: https://helm.sh/docs/intro/install/
 if ! command -v helm &> /dev/null; then
-  echo "Installing Helm..."
-  curl -LO https://get.helm.sh/helm-v3.12.0-linux-amd64.tar.gz
-  tar -zxvf helm-v3.12.0-linux-amd64.tar.gz
-  mv linux-amd64/helm /usr/local/bin/helm
-  rm -rf linux-amd64 helm-v3.12.0-linux-amd64.tar.gz
+  curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+  sudo apt-get update
+  sudo apt-get install -y helm
 fi
 
 # Install Terraform if not installed
+# Source: https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
 if ! command -v terraform &> /dev/null; then
   echo "Installing Terraform..."
-  curl -LO https://releases.hashicorp.com/terraform/1.5.0/terraform_1.5.0_linux_amd64.zip
-  unzip terraform_1.5.0_linux_amd64.zip
-  mv terraform /usr/local/bin/
-  rm -rf terraform_1.5.0_linux_amd64.zip
+  wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+  echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+  sudo apt update
+  sudo apt-get install -y terraform
 fi
 
 # Starting Minikube
