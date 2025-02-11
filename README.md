@@ -43,6 +43,7 @@ sonar_db_password = "secretpassword"
 ```
 
 ### **Option 1: Launch locally**
+Must be run as a regular user. After a brief moment a sudo password will be required.
 ```bash
 ./setup-on-ubuntu.sh
 ```
