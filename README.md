@@ -1,8 +1,8 @@
 # SonarQube on Minikube with Terraform & Helm
 
 This repository primarly demonstrates an automated deployment of SonarQube on a Minikube cluster using Terraform and Helm. 
-Host system setup for the whole deployment has been tested using Vagrant and `setup-general.sh` Bash script.
-Check out `setup-general.sh` for dependencies if preparing your environment without Vagrant.
+Host system setup for the whole deployment has been tested using Vagrant and `setup-on-ubuntu.sh` Bash script.
+Check out `setup-on-ubuntu.sh` for dependencies if preparing your environment without Vagrant.
 The setup performs the following tasks:
 
 1. **Installs Required Tools:**  
