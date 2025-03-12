@@ -1,3 +1,6 @@
+
+# WORK IN PROGRESS
+
 # SonarQube on Minikube with Terraform & Helm
 
 This repository primarly demonstrates an automated deployment of SonarQube on a Minikube cluster using Terraform and Helm. 
