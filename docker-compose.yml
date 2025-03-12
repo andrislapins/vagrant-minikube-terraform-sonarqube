@@ -1,0 +1,151 @@
+
+version: '3.8'
+
+volumes:
+  mongodb-data:
+
+networks:
+  movie-app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+
+services:
+  # ---------------------------------------------------
+  # 1) React/TypeScript/Vite Frontend
+  # ---------------------------------------------------
+  frontend:
+    image: andrelapin/movie_app_frontend
+    container_name: movie-app-frontend
+    ports:
+      - "3080:80"
+    environment:
+      - OTEL_SERVICE_NAME="movie-app-frontend"
+      - OTEL_RESOURCE_ATTRIBUTES="service=movie-app-frontend,env=dev"
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://192.168.1.10:4317
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_NODE_RESOURCE_DETECTORS="env,host,os"
+      - NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/register"
+    depends_on:
+      - backend
+    networks:
+      - movie-app-network
+
+  # ---------------------------------------------------
+  # 2) Spring-Boot/Java Backend
+  # ---------------------------------------------------
+  backend:
+    image: andrelapin/movie_app_backend
+    container_name: movie-app-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - OTEL_SERVICE_NAME="movie-app-backend"
+      - OTEL_RESOURCE_ATTRIBUTES="service=movie-app-backend,env=dev"
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://192.168.1.10:4317
+      - OTEL_LOGS_EXPORTER=otlp
+    depends_on:
+      mongodb:
+        condition: service_started
+      otelcollector:
+        condition: service_started
+    networks:
+      - movie-app-network
+
+  # ---------------------------------------------------
+  # 3) MongoDB Database
+  # ---------------------------------------------------
+  mongodb:
+    image: mongo:latest
+    container_name: movie-app-mongodb
+    volumes:
+      - mongodb-data:/data/db
+      - ./mongo-backup:/mongo-backup
+      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+    environment:
+      - MONGO_LOG_LEVEL=WARN
+      - MONGO_INITDB_ROOT_USERNAME=andre
+      - MONGO_INITDB_ROOT_PASSWORD=Q6381u9sDdtE
+      - MONGO_INITDB_DATABASE=movie-api-db
+    ports:
+      - "27017:27017"
+    networks:
+      - movie-app-network
+
+  # ---------------------------------------------------
+  # 4) OpenTelemetry Collector
+  # ---------------------------------------------------
+  otelcollector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otelcollector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./monitoring/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    restart: always
+    ports:
+      - "4317" # OTLP gRPC receiver
+      - "4318" # OTLP HTTP receiver
+      - "8889" # Prometheus exporter metrics
+    depends_on:
+      jaeger:
+        condition: service_started
+    networks:
+      movie-app-network:
+        ipv4_address: 192.168.1.10
+
+  # ---------------------------------------------------
+  # 5) Jaeger for Traces
+  # ---------------------------------------------------
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    restart: always
+    ports:
+      - "16686:16686" # Jaeger UI
+      - "4317" # OTLP gRPC receiver
+    networks:
+      - movie-app-network
+
+  # ---------------------------------------------------
+  # 6) Prometheus for Metrics
+  # ---------------------------------------------------
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    volumes:
+      - ./monitoring/prometheus.yaml:/etc/prometheus/prometheus.yml
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --enable-feature=exemplar-storage
+      - --web.enable-remote-write-receiver
+    restart: always
+    ports:
+      - '9090:9090'
+    networks:
+      - movie-app-network
+    depends_on:
+      - otelcollector
+
+  # ---------------------------------------------------
+  # 7) Grafana for Dashboards
+  # ---------------------------------------------------
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    volumes:
+      - ./monitoring/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./monitoring/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./monitoring/jvm-metrics-dashboard.json:/etc/grafana/provisioning/dashboards/jvm-metrics-dashboard.json
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_LOG_LEVEL=error
+    networks:
+      - movie-app-network
+    depends_on:
+      - prometheus
+      - jaeger

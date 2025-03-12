@@ -1,0 +1,58 @@
+{
+    "id": null,
+    "uid": "jvm-monitoring",
+    "title": "JVM Monitoring",
+    "schemaVersion": 16,
+    "version": 1,
+    "time": {
+      "from": "now-15m",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "title": "JVM Memory Usage",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "process_runtime_jvm_memory_usage_bytes",
+            "legendFormat": "Memory Usage",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "title": "JVM Heap Memory Limit",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "process_runtime_jvm_memory_limit_bytes",
+            "legendFormat": "Heap Limit",
+            "refId": "B"
+          }
+        ]
+      },
+      {
+        "title": "JVM CPU Utilization",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "process_runtime_jvm_cpu_utilization_ratio * 100",
+            "legendFormat": "CPU %",
+            "refId": "C"
+          }
+        ]
+      },
+      {
+        "title": "Garbage Collection Time",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "increase(process_runtime_jvm_gc_duration_seconds_sum[1m])",
+            "legendFormat": "GC Duration",
+            "refId": "D"
+          }
+        ]
+      }
+    ],
+    "refresh": "5s"
+}

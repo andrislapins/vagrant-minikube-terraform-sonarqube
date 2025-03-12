@@ -1,0 +1,18 @@
+controller:
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    hostName: ${jenkins_hostname}
+    paths: []
+  prometheus:
+    enabled: true
+    serviceMonitorAdditionalLabels: {}
+    scrapeInterval: 30s
+    scrapeEndpoint: /prometheus
+  installPlugins:
+  - kubernetes:4306.vc91e951ea_eb_d
+  - workflow-aggregator:600.vb_57cdd26fdd7
+  - git:5.7.0
+  - configuration-as-code:1932.v75cb_b_f1b_698d
+  - prometheus:811.v1823c780b_e8e

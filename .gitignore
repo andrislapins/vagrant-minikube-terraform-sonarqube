@@ -55,20 +55,17 @@ terraform.rc
 *.swn
 
 # Project specific ignores
-*.pdf
-attic/
+.venv/
 .vagrant/
-TODOs.txt
-backend/
-frontend/
+attic/
+
 jenkins/
+
+*.pdf
+TODOs.txt
 
 setup-personal.sh
 
-terraform/jenkins.tf
-terraform/k8s-metrics.tf
-terraform/prometheus.tf
+minikube/
 
-terraform/configs/jenkins.tpl.yaml
-terraform/configs/metrics.tpl.yaml
-terraform/configs/prometheus.tpl.yaml
+minikube/secrets.auto.tfvars
