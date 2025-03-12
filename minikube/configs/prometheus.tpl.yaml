@@ -1,0 +1,18 @@
+prometheus:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - ${prometheus_hostname}
+grafana:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - ${grafana_hostname}
+altermanager:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - ${alertmanager_hostname}
