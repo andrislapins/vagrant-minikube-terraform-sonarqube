@@ -62,6 +62,7 @@ TODOs.txt
 backend/
 frontend/
 jenkins/
+.venv/
 
 setup-personal.sh
 
@@ -72,3 +73,6 @@ terraform/prometheus.tf
 terraform/configs/jenkins.tpl.yaml
 terraform/configs/metrics.tpl.yaml
 terraform/configs/prometheus.tpl.yaml
+
+minikube/
+attic/

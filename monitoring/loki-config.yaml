@@ -1,0 +1,58 @@
+
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9095
+
+ingester:
+  wal:
+    enabled: false
+  lifecycler:
+    address: 127.0.0.1
+    ring:
+      replication_factor: 1
+      kvstore:
+        store: inmemory
+  # Controls how Loki chunks logs in memory before flushing to storage:
+  chunk_idle_period: 5m
+  max_chunk_age: 1h
+  chunk_target_size: 1048576
+
+limits_config:
+  # Example rate/burst settings
+  ingestion_rate_mb: 8
+  ingestion_burst_size_mb: 20
+  max_concurrent_tail_requests: 20
+  max_cache_freshness_per_query: 10m
+
+schema_config:
+  configs:
+    - from: 2023-10-20
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+storage_config:
+  filesystem:
+    directory: /var/loki
+
+  tsdb_shipper:
+    active_index_directory: /var/loki/index
+    cache_location: /var/loki/cache
+
+compactor:
+  delete-request-store: filesystem
+  working_directory: /var/loki/compactor
+  retention_enabled: true
+  retention_delete_delay: 12h
+
+query_range:
+  parallelise_shardable_queries: false
+
+table_manager:
+  retention_deletes_enabled: false
+  retention_period: 0s
